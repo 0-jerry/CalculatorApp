@@ -9,11 +9,11 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    private let inputTextLabel = UILabel()
-    private let stackView = UIStackView()
+    private var inputTextLabel: UILabel?
+    private var stackView: UIStackView?
     
     private let stackViewBlankConstant: CGFloat = 30
-    private let stackViewSpacing: CGFloat = 5
+    private let stackViewSpacing: CGFloat = 10
     
     private let buttonTitle: [[String]] = [["7","8","9","+"],
                                            ["4","5","6","−"],
@@ -39,40 +39,58 @@ class ViewController: UIViewController {
 
 //MARK: - Set Up UI
 extension ViewController {
+    
     private func setUpUI() {
         self.view.backgroundColor = .black
+        
         setUpInputLabel()
-        setUpStackView()
-        for str in buttonTitle[0] {
-            let button = self.makeButton()
-            button.setTitle(str, for: .normal)
-            self.stackView.addArrangedSubview(button)
+        
+        var horizontalStackViews: [UIStackView] = []
+        for row in buttonTitle {
+            var buttons: [UIButton] = []
+            for title in row {
+                let button = makeButton(title: title)
+                buttons.append(button)
+            }
+            let horizontalStackView = makeHorizontalStackView(buttons)
+            horizontalStackViews.append(horizontalStackView)
         }
+        
+        setVerticalStackView(horizontalStackViews)
     }
     
+    
+    //라벨 생성 메서드
     private func setUpInputLabel() {
-        let inputTextLabel = self.inputTextLabel
+        let inputTextLabel = UILabel()
         
         self.view.addSubview(inputTextLabel)
         
         inputTextLabel.backgroundColor = .clear
         inputTextLabel.font = .boldSystemFont(ofSize: 60)
         inputTextLabel.textColor = .white
-        inputTextLabel.text = "12345"
+        inputTextLabel.text = "0"
         inputTextLabel.textAlignment = .right
         
         inputTextLabel.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = inputTextLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 300)
         let leadingConstraint = inputTextLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 30)
         let trailingConstraint = inputTextLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -30)
-        let heightConstraint = inputTextLabel.heightAnchor.constraint(equalToConstant: 100)
         
-        NSLayoutConstraint.activate([topConstraint, leadingConstraint, trailingConstraint, heightConstraint])
+        inputTextLabel.frame.size.height = 100
+        
+        NSLayoutConstraint.activate([topConstraint, leadingConstraint, trailingConstraint])
+        
+        self.inputTextLabel = inputTextLabel
     }
     
-    private func setUpStackView() {
-        let stackView = self.stackView
-        self.view.addSubview(stackView)
+    //수평 스택 뷰 생성
+    private func makeHorizontalStackView(_ views: [UIView]) -> UIStackView {
+        let stackView = UIStackView()
+        
+        for view in views {
+            stackView.addArrangedSubview(view)
+        }
         
         stackView.backgroundColor = .clear
         stackView.alignment = .center
@@ -80,26 +98,58 @@ extension ViewController {
         stackView.spacing = stackViewSpacing
         stackView.axis = .horizontal
         
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        let leadingConstraint = stackView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: stackViewBlankConstant)
-        let trailingConstraint = stackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -stackViewBlankConstant)
-        let topConstraint = stackView.topAnchor.constraint(equalTo: self.inputTextLabel.bottomAnchor, constant: 30)
-        let bottomConstraint = stackView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -30)
+//        stackView.frame.size =
         
-        NSLayoutConstraint.activate([leadingConstraint, trailingConstraint, topConstraint, bottomConstraint])
+        return stackView
+    }
+    
+    private func setVerticalStackView(_ views: [UIStackView]){
+        let stackView = UIStackView()
+        
+        self.view.addSubview(stackView)
+        
+        views.forEach { view in
+            stackView.addArrangedSubview(view)
+        }
+        
+        guard let inputTextLabel = self.inputTextLabel else { return }
+        
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = self.stackViewSpacing
+        stackView.distribution = .fillEqually
+        stackView.backgroundColor = .clear
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let topConstraint = stackView.topAnchor.constraint(equalTo: inputTextLabel.bottomAnchor, constant: 60)
+        let centerX = stackView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        stackView.frame.size.width = 350
+        
+        NSLayoutConstraint.activate([topConstraint, centerX])
     }
     
     
-    private func makeButton() -> UIButton {
+    //버튼 생성
+    //TODO: 추상화 필요
+    private func makeButton(title: String) -> UIButton {
         let button = UIButton()
-                
-        button.backgroundColor = UIColor(red: 58/255,
-                                         green: 58/255,
-                                         blue: 58/255,
-                                         alpha: 1.0)
+        
+        if nil != Int(title) {
+            button.backgroundColor = UIColor(red: 58/255,
+                                             green: 58/255,
+                                             blue: 58/255,
+                                             alpha: 1.0)
+        } else {
+            button.backgroundColor = .orange
+        }
+        
+        button.addTarget(self, action: #selector(touchInsideButton), for: .touchUpInside)
+        button.setTitle(title, for: .normal)
         
         button.titleLabel?.font = .boldSystemFont(ofSize: 30)
         button.titleLabel?.textColor = .white
+        
         
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -112,7 +162,32 @@ extension ViewController {
         
         return button
     }
+    
+    //FIXME: 버튼 타겟 액션
+    //1. 예외처리 (연산자를 입력받을 경우)
+    //2. 연산 메서드 (= 버튼 입력 시)
+    //3. 추상화: AC / = / 연산자 / 숫자 로 메서드 분리
+    @objc private func touchInsideButton(_ sender: UIButton) {
+        guard let text = sender.titleLabel?.text else {
+            return
+        }
+        print(sender.titleLabel?.text)
+        
+        switch text {
+        case "AC":
+            self.inputTextLabel?.text = "0"
+            return
+        case "=":
+            //입력 연산처리 메서드 필요
+            return
+        default:
+            //에러처리 필요
+            self.inputTextLabel?.text = (self.inputTextLabel?.text ?? "") + text
+        }
+    }
+
 }
+
 
 
 //미리보기
