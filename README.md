@@ -1,5 +1,9 @@
 # CalculatorApp
 
-### 스크린 샷
+- 오토레이아웃을 통한 뷰 구현
+  
+- 모델 미구현
+- 라벨 출력 형식 미구현
 
-![Simulator Screenshot - iPhone 16 Pro - 2024-11-11 at 17 09 06](https://github.com/user-attachments/assets/6c7a60ca-2229-4f17-bc8a-59aeea663749)
+
+<img src="https://github.com/user-attachments/assets/7e3a9873-9062-4c32-9647-2f2a94f78023" width="50%" alt="대체텍스트">
