@@ -222,12 +222,32 @@ extension CalculatorViewController {
     private func touchEqualButton() {
         
     }
+  
+  @objc private func touchInsideButton(_ sender: CalculatorButton) {
+    guard let input = sender.buttonTitle else { return }
+    
+    do {
+      let result = try self.calculator.input(input)
+      self.inputLabelUpdate(result)
+      
+    } catch let error as CalculatorError {
+      let description = String(describing: error)
+      self.inputLabelUpdate(description)
+      
+    } catch CalculatorInputError.invalidInput {
+      return
+      
+    } catch let error {
+      print(error)
+      return
+    }
+  }
 }
 
 
+//MARK: - 미리보기
 
-//미리보기
 #Preview("CalculatorViewController") {
-    CalculatorViewController()
+  CalculatorViewController()
 }
 

@@ -18,11 +18,11 @@ class CalculatorButton: UIButton {
     label.textAlignment = .center
     label.numberOfLines = 1
     label.textColor = .white
-    label.font = .boldSystemFont(ofSize: 30)
+    label.font = .boldSystemFont(ofSize: UIStyle().fontSize)
   }
   
   // 버튼 사이즈
-  private let buttonSize: CGFloat = 80
+  private let buttonSize: CGFloat = UIStyle().buttonSize
   
   // 버튼 타이틀
   var buttonTitle: String? {
@@ -129,7 +129,6 @@ extension CalculatorButton {
     self.clipsToBounds = true
   }
 }
-
 
 // 미리보기
 #Preview("CalculatorViewController") {
