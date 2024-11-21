@@ -7,6 +7,7 @@
 
 import Foundation
 
+//MARK: - CalculatorInputError 계산기 입력 에러 처리
 enum CalculatorInputError: Error, CustomStringConvertible {
   
   case invalidInput
