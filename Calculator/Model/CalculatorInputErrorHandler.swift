@@ -46,9 +46,6 @@ class CalculatorInputErrorHandler {
   // calculatorState별 에러 검증 메서드 반환
   private func methodNavigate() -> ((Character) throws -> Void) {
     switch calculatorState {
-    case .initial:
-      return initialError
-      
     case .firstNumber:
       return firstNumberError
       
@@ -61,27 +58,7 @@ class CalculatorInputErrorHandler {
   }
 }
 
-//MARK: - CalculatorInputErrorHandler (initial)
-extension CalculatorInputErrorHandler {
 
-  // initial 상태에 대한 입력 검증 메서드
-  private func initialError(_ input: Character) throws {
-    
-    guard initialValidInput(input) else {
-      throw CalculatorInputError.invalidInput }
-  }
-  
-  private func initialValidInput(_ input: Character) -> Bool {
-    
-    let isValidInteger: Bool = validFirstInteger.contains(input)
-    
-    let isMinus: Bool = input == "-"
-    
-    return isValidInteger || isMinus
-  }
-
-}
- 
 //MARK: - CalculatorInputErrorHandler (firstNumber)
 extension CalculatorInputErrorHandler {
   
@@ -103,7 +80,7 @@ extension CalculatorInputErrorHandler {
   }
   
 }
- 
+
 //MARK: - CalculatorInputErrorHandler (continueNumber)
 extension CalculatorInputErrorHandler {
   
@@ -115,7 +92,6 @@ extension CalculatorInputErrorHandler {
     }
   }
   
-  // continueNumberValidInput - 
   private func continueNumberValidInput(_ input: Character) -> Bool {
     let lastInputIsMinus = self.lastInput == "-"
     
@@ -128,7 +104,7 @@ extension CalculatorInputErrorHandler {
   }
   
 }
- 
+
 //MARK: - CalculatorInputErrorHandler (error)
 extension CalculatorInputErrorHandler {
   
@@ -137,24 +113,4 @@ extension CalculatorInputErrorHandler {
     throw CalculatorInputError.unknown
   }
   
-}
-
-enum CalculatorInputError: Error, CustomStringConvertible {
-  
-  case invalidInput
-  case unknown
-  
-  var description: String {
-    switch self {
-    case .invalidInput: return "부적합한 입력"
-    case .unknown: return "알 수 없는 에러"
-    }
-  }
-}
-
-import UIKit
-
-// 미리보기
-#Preview("CalculatorViewController") {
-  CalculatorViewController()
 }

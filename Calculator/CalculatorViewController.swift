@@ -100,7 +100,6 @@ extension CalculatorViewController {
   private func setUpGridStackViewLayout() {
     gridStackView.snp.makeConstraints { stackView in
       stackView.leading.trailing.bottom.equalToSuperview().inset(UIStyle().constant)
-      //      stackView.top.equalTo(self.inputTextLabel.snp.bottom).inset(UIStyle().constant)
     }
   }
 }
@@ -168,7 +167,7 @@ extension CalculatorViewController {
 }
 
 
-//MARK: - 버튼 연산 액션 (미구현)
+//MARK: - 버튼 연산 액션
 extension CalculatorViewController {
   
   @objc private func touchInsideButton(_ sender: CalculatorButton) {
@@ -178,7 +177,7 @@ extension CalculatorViewController {
       let result = try self.calculator.input(input)
       self.inputLabelUpdate(result)
       
-    } catch let error as CalculatorError {
+    } catch let error as CalculateError {
       let description = String(describing: error)
       self.inputLabelUpdate(description)
       
@@ -191,11 +190,3 @@ extension CalculatorViewController {
     }
   }
 }
-
-
-//MARK: - 미리보기
-
-#Preview("CalculatorViewController") {
-  CalculatorViewController()
-}
-

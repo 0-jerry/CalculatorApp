@@ -7,6 +7,7 @@
 
 import UIKit
 
+//MARK: - UIStyle UI의 사이즈들을 연산해 저장해주는 데이터 형태
 struct UIStyle {
   
   let spacing: CGFloat = UIScreen.main.bounds.width / 50
@@ -24,10 +25,4 @@ struct UIStyle {
     buttonSize * 0.4
   }
   
-}
-
-
-// 미리보기
-#Preview("CalculatorViewController") {
-  CalculatorViewController()
 }

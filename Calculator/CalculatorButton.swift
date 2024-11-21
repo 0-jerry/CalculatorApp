@@ -9,8 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-//MARK: - 커스텀 계산기 버튼
-
+//MARK: - CalculatorButton 커스텀 계산기 버튼
 class CalculatorButton: UIButton {
   
   // 버튼 라벨
@@ -39,7 +38,7 @@ class CalculatorButton: UIButton {
 }
 
 
-//MARK: - 버튼 데이터 설정
+//MARK: - CalculatorButton 버튼 데이터 설정
 
 extension CalculatorButton {
   
@@ -92,7 +91,7 @@ extension CalculatorButton {
 }
 
 
-//MARK: - 버튼 Set Up UI
+//MARK: - CalculatorButton 버튼 Set Up UI
 
 extension CalculatorButton {
   
@@ -128,9 +127,4 @@ extension CalculatorButton {
     self.layer.cornerRadius = buttonSize / 2
     self.clipsToBounds = true
   }
-}
-
-// 미리보기
-#Preview("CalculatorViewController") {
-  CalculatorViewController()
 }
