@@ -124,7 +124,7 @@ extension CalculatorModel {
       try inputOperator(calculateOperator)
     }
     
-    return try self.wholeInput(form: .view)
+    return self.wholeInput(form: .view)
   }
 }
 
@@ -154,7 +154,7 @@ extension CalculatorModel {
   private func inputEqual() throws -> String {
     
     //연산을 위한 전체 문자열 연산
-    let wholeInput = try self.wholeInput(form: .calculate)
+    let wholeInput = self.wholeInput(form: .calculate)
     //문자열을 통한 결과값 계산
     let result = try self.calculate(expression: wholeInput)
     let strResult = String(result)
@@ -186,9 +186,7 @@ extension CalculatorModel {
 //MARK: - CalculatorModel (wholeInput): View와 calculate메서드를 위한 형태 제공 메서드
 extension CalculatorModel {
   //currentInput, integers, operators를 통해 전체 문자열 반환
-  private func wholeInput(form: InputForm) throws -> String {
-    guard integers.count >= operators.count else { throw CalculateError.unknown }
-    
+  private func wholeInput(form: InputForm) -> String {
     var wholeInput = ""
     
     // integers와 operators를 문자열 연산을 위한 형태로 저장
