@@ -58,7 +58,6 @@ class CalculatorModel {
     }
   }
   
-  //TODO: 더 명확한 상태들로 추상화
   // 상태 열거형
   enum State: Equatable {
     // 첫 번째 입력 대기 (-,1...9 입력 가능)
@@ -79,6 +78,7 @@ class CalculatorModel {
   
 }
 
+
 //MARK: - CalculatorModel (input)
 extension CalculatorModel {
   
@@ -86,9 +86,9 @@ extension CalculatorModel {
   func input(_ str: String) throws -> String {
     
     //AC를 입력받을 경우 reset 후 "0"을 반환
-    if str == "AC" {
+    guard str != "AC" else {
       reset()
-      return try wholeInput(form: .view)
+      return wholeInput(form: .view)
     }
     
     let input = Character(str)
@@ -102,6 +102,7 @@ extension CalculatorModel {
     //뷰를 위한 반영 결과 반환
     return result
   }
+  
 }
 
 
@@ -126,6 +127,7 @@ extension CalculatorModel {
     
     return self.wholeInput(form: .view)
   }
+  
 }
 
 
@@ -149,7 +151,6 @@ extension CalculatorModel {
     self.operators.append(calculatorOperator)
   }
   
-  
   //"="을 입력받을 경우
   private func inputEqual() throws -> String {
     
@@ -158,9 +159,6 @@ extension CalculatorModel {
     //문자열을 통한 결과값 계산
     let result = try self.calculate(expression: wholeInput)
     let strResult = String(result)
-    
-    //모델 데이터 reset
-    reset()
     
     return strResult
   }
@@ -183,8 +181,10 @@ extension CalculatorModel {
   }
 }
 
+
 //MARK: - CalculatorModel (wholeInput): View와 calculate메서드를 위한 형태 제공 메서드
 extension CalculatorModel {
+  
   //currentInput, integers, operators를 통해 전체 문자열 반환
   private func wholeInput(form: InputForm) -> String {
     var wholeInput = ""
@@ -203,16 +203,21 @@ extension CalculatorModel {
     //전체 입력값이 비어있는 경우 "0", 아닌 경우 연산된 전체 문자열 반환
     return !wholeInput.isEmpty ? wholeInput : "0"
   }
+  
 }
 
 extension CalculatorModel {
   
   //문자열을 통한 연산 메서드
   private func calculate(expression: String) throws -> Int {
+    
+    //연산이 끝난 후 공통적으로 호출
+    defer { reset() }
+    
     //0으로 나눌 경우에 대해 Error throw
     guard !expression.contains("/0") else {
-      reset()
-      throw CalculateError.divideByZero }
+      throw CalculateError.divideByZero
+    }
     
     let expression = NSExpression(format: expression)
     
@@ -222,5 +227,5 @@ extension CalculatorModel {
       throw CalculateError.calculateFail
     }
   }
+  
 }
-

@@ -31,6 +31,7 @@ class CalculatorInputErrorHandler {
     self.calculatorModel = calculatorModel
   }
   
+  
   // 외부 사용 메서드
   func verifyError(of input: Character) throws {
     

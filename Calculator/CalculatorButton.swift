@@ -25,8 +25,7 @@ class CalculatorButton: UIButton {
   
   // 버튼 타이틀
   var buttonTitle: String? {
-    guard let title = buttonLabel.text else { return nil }
-    return title
+    buttonLabel.text
   }
   
   // addSubview 시 실행

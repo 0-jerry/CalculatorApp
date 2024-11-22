@@ -23,6 +23,8 @@ class CalculatorViewController: UIViewController {
     inputTextLabel.text = "0"
     inputTextLabel.textColor = .white
     inputTextLabel.backgroundColor = .clear
+    inputTextLabel.adjustsFontSizeToFitWidth = true
+    inputTextLabel.minimumScaleFactor = 0.7
   }
   
   //버튼 격자 스택 뷰
@@ -49,8 +51,8 @@ class CalculatorViewController: UIViewController {
   }
 }
 
-//MARK: - Set Up UI
 
+//MARK: - Set Up UI
 extension CalculatorViewController {
   
   // Set Up UI
@@ -61,6 +63,7 @@ extension CalculatorViewController {
     setUpInputLabel()
   }
 }
+
 
 //MARK: - inputLabel 라벨 설정
 extension CalculatorViewController {
@@ -158,10 +161,15 @@ extension CalculatorViewController {
   
   // 버튼 생성
   private func makeCalculatorButton(_ title: String) -> UIButton {
+    
     let button = CalculatorButton()
     self.view.addSubview(button)
     button.setData(title)
-    button.addTarget(self, action: #selector(touchInsideButton), for: .touchUpInside)
+    
+    button.addTarget(self,
+                     action: #selector(touchUpInsideButton),
+                     for: .touchUpInside)
+    
     return button
   }
 }
@@ -170,7 +178,7 @@ extension CalculatorViewController {
 //MARK: - 버튼 연산 액션
 extension CalculatorViewController {
   
-  @objc private func touchInsideButton(_ sender: CalculatorButton) {
+  @objc private func touchUpInsideButton(_ sender: CalculatorButton) {
     guard let input = sender.buttonTitle else { return }
     
     do {
