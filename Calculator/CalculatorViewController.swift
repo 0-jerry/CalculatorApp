@@ -176,16 +176,17 @@ extension CalculatorViewController {
     do {
       let result = try self.calculator.input(input)
       self.inputLabelUpdate(result)
+
+    } catch CalculatorInputError.invalidInput {
+      return
       
     } catch let error as CalculateError {
       let description = String(describing: error)
       self.inputLabelUpdate(description)
       
-    } catch CalculatorInputError.invalidInput {
-      return
-      
-    } catch let error {
-      print(error)
+    } catch {
+      let errorMessage = "알 수 없는 에러"
+      self.inputLabelUpdate(errorMessage)
       return
     }
   }
