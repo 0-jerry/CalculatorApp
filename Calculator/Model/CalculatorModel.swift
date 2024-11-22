@@ -23,10 +23,14 @@ class CalculatorModel {
   }
   
   var state: State {
-    if integers.count == operators.count {
-      return currentInput.isEmpty ? State.firstNumber : State.continueNumber
-    } else {
-      return State.error
+    guard integers.count == operators.count else {
+      return .error
+    }
+    
+    switch currentInput {
+    case "": return .firstInput
+    case "-": return .firstNumber
+    default: return .continueNumber
     }
   }
   
@@ -57,9 +61,11 @@ class CalculatorModel {
   //TODO: 더 명확한 상태들로 추상화
   // 상태 열거형
   enum State: Equatable {
-    // 첫 번째 입력 대기  (-,1...9 입력 가능)
+    // 첫 번째 입력 대기 (-,1...9 입력 가능)
+    case firstInput
+    // 첫 번째 숫자 입력 대기 (1...9 입력 가능)
     case firstNumber
-    // 이어지는 입력 대기 상태 (마지막 입력이 -일 경우, (0,-,+,×,÷,=) 입력에 대해 예외처리 / 그 외의 경우 전부 입력 가능)
+    // 모든 계산기 입력 처리 가능
     case continueNumber
     // 에러 상태
     case error
@@ -70,6 +76,7 @@ class CalculatorModel {
     case calculate
     case view
   }
+  
 }
 
 //MARK: - CalculatorModel (input)
@@ -79,17 +86,18 @@ extension CalculatorModel {
   func input(_ str: String) throws -> String {
     
     //AC를 입력받을 경우 reset 후 "0"을 반환
-    guard str != "AC" else {
+    if str == "AC" {
       reset()
       return try wholeInput(form: .view)
     }
     
-    let char = Character(str)
+    let input = Character(str)
+    
     //입력값을 검증
-    try errorHandler.verifyError(of: char)
+    try errorHandler.verifyError(of: input)
     
     //입력값 처리
-    let result = try inputMethod(char)
+    let result = try inputMethod(input)
     
     //뷰를 위한 반영 결과 반환
     return result
@@ -102,32 +110,22 @@ extension CalculatorModel {
   
   //입력 처리 메서드
   private func inputMethod(_ input: Character) throws -> String {
-    // 입력 케이스를 나누기 위한 Bool값들
-    let interger = Int(String(input))
-    let isInteger: Bool = interger != nil
-    
-    let calculateOperator = CalculatorOperator(rawValue: input)
-    let isOperator: Bool = calculateOperator != nil
-    
-    let enableInputMinus: Bool = state == .firstNumber
-    let isMinus: Bool = input == "-"
-    let isEqual: Bool = input == "="
-    
-    // 입력 조건별 실행
-    if isInteger, let integer = interger {
-      inputInteger(integer)
-    } else if enableInputMinus, isMinus {
-      inputMinus()
-    } else if isOperator, let calculateOperator = calculateOperator {
-      try inputOperator(calculateOperator)
-    } else if isEqual {
+    if input == "=" {
       return try inputEqual()
+    }
+    
+    if let integer = Int(String(input)) {
+      inputInteger(integer)
+      
+    } else if (state == .firstInput), input == "-" {
+      inputMinus()
+      
+    } else if let calculateOperator = CalculatorOperator(rawValue: input) {
+      try inputOperator(calculateOperator)
     }
     
     return try self.wholeInput(form: .view)
   }
-  
-  
 }
 
 
@@ -135,15 +133,7 @@ extension CalculatorModel {
 extension CalculatorModel {
   
   //연산자를 입력받는 경우
-  private func inputOperator(_ calculatorOperator: CalculatorOperator) throws  {
-    
-    //TODO: "-"에 대해선 첫 입력의 경우만 인정되는 형태로 수정 필요
-    //-와 숫자로만 이뤄진 형태인지 검증
-    let checkedCurrentInput = currentInput.filter { $0.isNumber || $0 == "-" }
-    guard self.currentInput == checkedCurrentInput else {
-      reset()
-      throw CalculateError.unknown
-    }
+  private func inputOperator(_ calculatorOperator: CalculatorOperator) throws {
     
     // 정수형으로 생성 가능한지 검증 (OverFlow, UnderFlow)
     guard let integer = Int(self.currentInput) else {
@@ -234,6 +224,5 @@ extension CalculatorModel {
       throw CalculateError.calculateFail
     }
   }
-  
 }
 

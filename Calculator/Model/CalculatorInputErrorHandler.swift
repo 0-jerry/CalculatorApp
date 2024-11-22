@@ -15,11 +15,7 @@ class CalculatorInputErrorHandler {
   private var calculatorState: CalculatorModel.State {
     self.calculatorModel.state
   }
-  
-  private var lastInput: Character? {
-    calculatorModel.lastInput
-  }
-  
+    
   private var integersCount: Int {
     calculatorModel.integers.count
   }
@@ -46,6 +42,10 @@ class CalculatorInputErrorHandler {
   // calculatorState별 에러 검증 메서드 반환
   private func methodNavigate() -> ((Character) throws -> Void) {
     switch calculatorState {
+      
+    case .firstInput:
+      return firstInputError
+      
     case .firstNumber:
       return firstNumberError
       
@@ -55,6 +55,25 @@ class CalculatorInputErrorHandler {
     case .error:
       return stateError
     }
+  }
+}
+
+//MARK: - CalculatorInputErrorHandler (firstInput)
+extension CalculatorInputErrorHandler {
+  // firstInput 상태에 대한 입력 검증 메서드
+  private func firstInputError(_ input: Character) throws {
+    
+    guard firstInputVaildInput(input) else {
+      throw CalculatorInputError.invalidInput
+    }
+  }
+  
+  private func firstInputVaildInput(_ input: Character) -> Bool {
+    
+    let isValidInteger: Bool = validFirstInteger.contains(input)
+    let isMinus: Bool = input == "-"
+    
+    return isValidInteger || isMinus
   }
 }
 
@@ -74,9 +93,7 @@ extension CalculatorInputErrorHandler {
     
     let isValidInteger: Bool = validFirstInteger.contains(input)
     
-    let isMinus: Bool = input == "-"
-    
-    return isValidInteger || isMinus
+    return isValidInteger
   }
   
 }
@@ -93,14 +110,8 @@ extension CalculatorInputErrorHandler {
   }
   
   private func continueNumberValidInput(_ input: Character) -> Bool {
-    let lastInputIsMinus = self.lastInput == "-"
-    
-    if lastInputIsMinus {
-      let isValidInteger: Bool = validFirstInteger.contains(input)
-      return isValidInteger
-    } else {
-      return true
-    }
+
+    return true
   }
   
 }
